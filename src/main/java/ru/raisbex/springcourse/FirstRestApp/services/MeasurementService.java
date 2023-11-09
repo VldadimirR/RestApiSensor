@@ -31,10 +31,12 @@ public class MeasurementService {
         this.modelMapper = modelMapper;
 
 
-        // Добавьте кастомный маппинг
+        // Кастомный маппинг
+        // Добавляем новую маппинг-конфигурацию для ModelMapper
         modelMapper.addMappings(new PropertyMap<Measurement, MeasurementDTO>() {
             @Override
             protected void configure() {
+                // Устанавливаем значение поля sensorName в MeasurementDTO равным значению поля name объекта, который является владельцем объекта Measurement
                 map().setSensorName(source.getOwner().getName());
             }
         });

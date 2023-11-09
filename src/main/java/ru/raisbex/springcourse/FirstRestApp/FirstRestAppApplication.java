@@ -53,7 +53,6 @@ public class FirstRestAppApplication {
 //			System.out.println(measurement);
 //		}
 
-// Создание графика
 		if (measurements == null || measurements.length == 0) {
 			System.out.println("Нет доступных данных измерений.");
 			return;

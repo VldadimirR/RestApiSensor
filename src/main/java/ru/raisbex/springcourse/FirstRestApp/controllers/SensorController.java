@@ -1,10 +1,8 @@
 package ru.raisbex.springcourse.FirstRestApp.controllers;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,52 +13,46 @@ import ru.raisbex.springcourse.FirstRestApp.services.SensorService;
 import ru.raisbex.springcourse.FirstRestApp.util.SensorValidation;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
-
-@RestController
-@RequestMapping("/sensors")
+@RestController // Аннотация, указывающая, что этот класс является контроллером, который обрабатывает HTTP-запросы
+@RequestMapping("/sensors") // Аннотация, указывающая, что все методы в этом классе будут обрабатывать запросы, начинающиеся с "/sensors"
 public class SensorController {
 
-    private final SensorService sensorService;
-    private final ModelMapper modelMapper;
-    private final SensorValidation sensorValidation;
+    private final SensorService sensorService; // Сервис для работы с датчиками
+    private final SensorValidation sensorValidation; // Сервис для валидации данных датчиков
 
-    public SensorController(SensorService sensorService, ModelMapper modelMapper, SensorValidation sensorValidation) {
+    public SensorController(SensorService sensorService, SensorValidation sensorValidation) {
         this.sensorService = sensorService;
-        this.modelMapper = modelMapper;
         this.sensorValidation = sensorValidation;
     }
 
+    // Метод, который обрабатывает POST-запросы на "/sensors/registration"
     @PostMapping("/registration")
-    public ResponseEntity<?> registrationSensor(@RequestBody @Valid SensorDTO sensorDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> registrationSensor(@RequestBody @Valid SensorDTO sensorDTO,
+                                                BindingResult bindingResult) {
 
-        Sensor sensor = modelMapper.map(sensorDTO, Sensor.class);
+        // Преобразуем DTO в сущность датчика
+        Sensor sensor = sensorService.convertToEntity(sensorDTO);
 
+        // Валидируем данные датчика
         sensorValidation.validate(sensor, bindingResult);
 
+        // Если возникли ошибки валидации, то возвращаем их
         if (bindingResult.hasErrors()){
-            return new ResponseEntity<>(getErrorMessages(bindingResult), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(sensorService.getErrorMessages(bindingResult),
+                    HttpStatus.BAD_REQUEST);
         }
+
+        // Регистрируем датчик
         sensorService.registerSensor(sensor);
 
-        SensorDTO sensorDTOResponse = modelMapper.map(sensor, SensorDTO.class);
+        // Преобразуем сущность датчика в DTO
+        SensorDTO sensorDTOResponse = sensorService.convertToDto(sensor);
 
+        // Возвращаем DTO в ответе
         return new ResponseEntity<SensorDTO>(sensorDTOResponse, HttpStatus.OK);
     }
 
-    private List<String> getErrorMessages(BindingResult bindingResult) {
-        return bindingResult.getAllErrors().stream()
-                .map(error -> {
-                    if (error instanceof FieldError) {
-                        return ((FieldError) error).getDefaultMessage();
-                    } else {
-                        return error.getDefaultMessage();
-                    }
-                })
-                .collect(Collectors.toList());
-    }
 }
 
 

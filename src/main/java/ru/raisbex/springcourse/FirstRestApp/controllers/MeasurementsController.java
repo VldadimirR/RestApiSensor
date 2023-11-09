@@ -15,11 +15,9 @@ import java.util.List;
 public class MeasurementsController {
 
     private final MeasurementService measurementService; // Сервис для работы с измерениями
-    private final ModelMapper modelMapper; // Объект для преобразования между сущностями и DTO
 
-    public MeasurementsController(MeasurementService measurementService, ModelMapper modelMapper) {
+    public MeasurementsController(MeasurementService measurementService) {
         this.measurementService = measurementService;
-        this.modelMapper = modelMapper;
     }
 
     // Получить все измерения

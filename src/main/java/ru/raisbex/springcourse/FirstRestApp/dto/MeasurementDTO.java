@@ -8,17 +8,17 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL) // Аннотация, указывающая, что в JSON должны быть включены только поля, значения которых не равны null
 public class MeasurementDTO {
-    @NotNull(message = "value not be empty")
-    @Min(value = -100, message = "temperature must be at least -100")
-    @Max(value = 100, message = "temperature must be at most 100")
+    @NotNull(message = "value not be empty") // Аннотация, указывающая, что значение не должно быть пустым
+    @Min(value = -100, message = "temperature must be at least -100") // Аннотация, указывающая, что значение должно быть не меньше -100
+    @Max(value = 100, message = "temperature must be at most 100") // Аннотация, указывающая, что значение должно быть не больше 100
     private float value;
-    @NotNull(message = "raining cannot be null")
+    @NotNull(message = "raining cannot be null") // Аннотация, указывающая, что значение не должно быть null
     private boolean raining;
 
-    @Valid
-    private SensorDTO sensor;
+    @Valid // Аннотация, указывающая, что значение должно быть валидировано
+    private SensorDTO sensor; // Объект датчика, который должен быть валидирован
 
     private String sensorName;
 
